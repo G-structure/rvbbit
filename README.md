@@ -7,7 +7,7 @@ Rabbit is a **hyper-composable** data platform that feels more like a **creative
 
 
 <kbd> <br> [**Public Demo Instance @ _run.RVBBIT.com_**](https://run.rvbbit.com) <br> </kbd> <br>
-> (right click on the canvas, drag out a _table_, drag out a _column_ header from the table... - tutorial coming soon)
+> (right click on the canvas, drag out a _table_, drag out a _column_ header from the table...)
 <br>
 
 
