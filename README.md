@@ -5,7 +5,8 @@
 
 Rabbit is a **hyper-composable** data platform that feels more like a **creative game engine** than a basic “dashboard” utility. Built on Clojure and SQL—but open to everyone—Rabbit gives you a direct-manipulation canvas where **drag-and-drop** meets **livecoding**, so you can shape, filter, pivot, visualize, and automate data exactly how you want.
 
-[<kbd> <br> Try the Demo Site - run.RVBBIT.com <br> </kbd>][https://run.rvbbit.com]
+<kbd> <br> [Try the Demo Site - run.RVBBIT.com](https://run.rvbbit.com) <br> </kbd>
+[<kbd> <br> Try the Demo Site - run.RVBBIT.com <br> </kbd>](https://run.rvbbit.com)
 
 ![alt text](docs/rvbbit-dev-mosiac.jpg)
 
