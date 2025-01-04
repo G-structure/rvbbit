@@ -7,7 +7,7 @@ Rabbit is a **hyper-composable** data platform that feels more like a **creative
 
 
 <kbd> <br> [**Public Demo Instance @ _run.RVBBIT.com_**](https://run.rvbbit.com) <br> </kbd> <br>
-<div style="font-size: 10px;"> (right click on the canvas & explore - tutorial coming soon) </div>
+<div style="font-size: 8px;"> (right click on the canvas & explore - tutorial coming soon) </div><br>
 
 
 
