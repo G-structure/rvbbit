@@ -812,10 +812,29 @@
                    ;:in-sync? (not not-in-sync?)
                    :selected-tab (get db :selected-tab)
                    :screen-name (get db :screen-name)
-                   :memory      (let [mem     (when (exists? js/window.performance.memory)
-                                                [(.-totalJSHeapSize js/window.performance.memory)
-                                                 (.-usedJSHeapSize js/window.performance.memory)
-                                                 (.-jsHeapSizeLimit js/window.performance.memory)])
+                   :memory      (let [;mem     (when (exists? js/window.performance.memory)
+                                      ;          [(.-totalJSHeapSize js/window.performance.memory)
+                                      ;           (.-usedJSHeapSize js/window.performance.memory)
+                                      ;           (.-jsHeapSizeLimit js/window.performance.memory)])
+                                      mem (if (exists? js/window.playwright)
+                                                     ;; Try CDP for Playwright first
+                                            (-> (js/window.playwright._client.send "Performance.getMetrics")
+                                                (.then (fn [metrics]
+                                                         (let [heap-metrics (js->clj metrics)]
+                                                           [(get heap-metrics "totalJSHeapSize")
+                                                            (get heap-metrics "usedJSHeapSize")
+                                                            (get heap-metrics "jsHeapSizeLimit")])))
+                                                (.catch (fn [_]
+                                                                 ;; Fallback to regular Chrome memory API
+                                                          (when (exists? js/window.performance.memory)
+                                                            [(.-totalJSHeapSize js/window.performance.memory)
+                                                             (.-usedJSHeapSize js/window.performance.memory)
+                                                             (.-jsHeapSizeLimit js/window.performance.memory)]))))
+                                                     ;; Regular Chrome browser if no Playwright
+                                            (when (exists? js/window.performance.memory)
+                                              [(.-totalJSHeapSize js/window.performance.memory)
+                                               (.-usedJSHeapSize js/window.performance.memory)
+                                               (.-jsHeapSizeLimit js/window.performance.memory)]))
                                       mem-row {:mem_time    (str (.toISOString (js/Date.)))
                                                :mem_total   (first mem)
                                                :packets     @packets-received

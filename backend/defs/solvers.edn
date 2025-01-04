@@ -112,15 +112,23 @@
    {:signal  :signal/every-5-minutes
     :type    :clojure
     :things? true
-    :data    (do (let [relative-dir   "assets/openai-images"
-                       dir            (clojure.java.io/file relative-dir)
-                       image-files    (filter (fn [x]
-                                                (and (.isFile x)
-                                                     (not (clojure.string/includes? (.getName x) "directory"))))
-                                        (file-seq dir))
-                       image-paths    (map (fn [x] (.getPath x)) image-files)
-                       relative-paths (map (fn [x] (.substring x (count (.getPath dir)))) image-paths)]
-                   (str relative-dir (when (seq relative-paths) (rand-nth relative-paths)))))}
+    :cache?  false
+    :data    (do (defn is-valid-file? [x] (and (.isFile x) (not (clojure.string/includes? (.getName x) "directory"))))
+                 (defn process-directory
+                   [relative-dir]
+                   (let [dir (clojure.java.io/file relative-dir)]
+                     (->> (file-seq dir)
+                          (filter is-valid-file?)
+                          (map (fn [x] (.getPath x)))
+                          (map (fn [path] [relative-dir path])))))
+                 (defn make-relative-path
+                   [[base-dir full-path]]
+                   (let [dir (clojure.java.io/file base-dir)]
+                     (str base-dir (.substring full-path (count (.getPath dir))))))
+                 (let [relative-dirs  ["assets/openai-images" "assets/photos"]
+                       all-files      (mapcat process-directory relative-dirs)
+                       relative-paths (map make-relative-path all-files)]
+                   (when (seq relative-paths) (rand-nth relative-paths))))}
  :refresh-bigfoot-ufos {:signal :signal/daily-at-9am
                         :type   :clojure
                         :cache? false

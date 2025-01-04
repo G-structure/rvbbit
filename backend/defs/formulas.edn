@@ -406,7 +406,7 @@
                    :description "Result of Clojure evaluation"}]
   :fn (fn [{:keys [data formula result-field]
                 :or {result-field "result"}}]
-            (ppl ["🦝 Processing Clojure:" formula :--> result-field])
+            ;; (ppl ["🦝 Processing Clojure:" formula :--> result-field])
             (let [expr-fn (try
                             (eval (read-string formula))
                             (catch Throwable e

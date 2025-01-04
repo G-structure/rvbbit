@@ -1020,18 +1020,18 @@
         indent (apply str (repeat depth "  "))
         prefix (str indent (if (pos? depth) "↳ " ""))]
 
-    (when (zero? depth)
-      (ppl [(str prefix "🐇🥕 Executing pipeline with:") (vec (keys (first data))) [:rows (count data)]]))
+    ;; (when (zero? depth)
+    ;;   (ppl [(str prefix "🐇🥕 Executing pipeline with:") (vec (keys (first data))) [:rows (count data)]]))
 
     (let [fields (atom (set (keys (first data))))
           result (reduce (fn [curr-data step]
                            (let [start-time (System/nanoTime)]
                             ;; Show step execution with proper indentation
                              (when notify-fn (notify-fn (str "running stack layer: " (inc (.indexOf pipeline step)) " " prefix " " (:result-field step))))
-                             (ppl [(str prefix "🥕 " (cond
-                                                       (string? step) (str "Bunch '" step "'")
-                                                       (:pipeline step) (str "Bunch '" (:name step) "'")
-                                                       :else (str "Formula '" (:formula step) "'")))])
+                            ;;  (ppl [(str prefix "🥕 " (cond
+                            ;;                            (string? step) (str "Bunch '" step "'")
+                            ;;                            (:pipeline step) (str "Bunch '" (:name step) "'")
+                            ;;                            :else (str "Formula '" (:formula step) "'")))])
 
                              (let [error-shoe (atom nil)
                                    result (cond
@@ -1039,7 +1039,7 @@
                                             (string? step)
                                             (if-let [bunch (get bunches step)]
                                               (do
-                                                (ppl [(str prefix "   ⚡ Required fields:") (:required-fields bunch)])
+                                                ;; (ppl [(str prefix "   ⚡ Required fields:") (:required-fields bunch)])
                                                 (if (every? (set (keys (first curr-data))) (:required-fields bunch))
                                                   (get (execute-pipeline curr-data (:pipeline bunch) (inc depth) notify-fn) :result)
                                                   (throw (ex-info "Data missing required fields for bunch"
@@ -1050,7 +1050,7 @@
                                          ;; It's a bunch definition inline
                                             (:pipeline step)
                                             (do
-                                              (ppl [(str prefix "   ⚡ Contains") (count (:pipeline step)) "steps"])
+                                              ;; (ppl [(str prefix "   ⚡ Contains") (count (:pipeline step)) "steps"])
                                               (get (execute-pipeline curr-data (:pipeline step) (inc depth) notify-fn) :result))
 
                                          ;; It's a regular carrot
@@ -1058,7 +1058,7 @@
                                             (try
                                               (let [formula (get formula-registry (:formula step))
                                                   formula-fn (:fn formula)]
-                                              (ppl [(str prefix "   ⚡ Params:") (:params step)])
+                                              ;; (ppl [(str prefix "   ⚡ Params:") (:params step)])
                                               (formula-fn (assoc (:params step) :data curr-data)))
                                               (catch Exception e
                                                 (do ;(when notify-fn (notify-fn (str " Step Error: " (get formula-registry (:formula step)) (str e))))
@@ -1066,9 +1066,9 @@
                                                     curr-data))))
                                    end-time (System/nanoTime)
                                    duration-ms (/ (- end-time start-time) 1000000.0)]
-                               (ppl [(str prefix "   ✓ Completed in") (format "%.2f" duration-ms) "ms"
-                                     (first result) ;;(vec (keys (first result)))
-                                     [:fields-added (cset/difference (set (keys (first result))) @fields) (:params step)]])
+                              ;;  (ppl [(str prefix "   ✓ Completed in") (format "%.2f" duration-ms) "ms"
+                              ;;        ;;(first result) ;;(vec (keys (first result)))
+                              ;;        [:fields-added (cset/difference (set (keys (first result))) @fields) (:params step)]])
                                (swap! step-vec conj (let [fields-added (vec (cset/difference (set (keys (first result))) @fields))
                                                           related-fields (if (str/starts-with? (str (get-in step [:params :formula])) "=")
                                                                            (try
@@ -1107,8 +1107,8 @@
           pipeline-end-time (System/nanoTime)
           total-duration-ms (/ (- pipeline-end-time pipeline-start-time) 1000000.0)]
 
-      (when (zero? depth)
-        (ppl [(str prefix "🎯 Pipeline completed in") (format "%.2f" total-duration-ms) "ms"]))
+      ;; (when (zero? depth)
+      ;;   (ppl [(str prefix "🎯 Pipeline completed in") (format "%.2f" total-duration-ms) "ms"]))
 
       {:result result
        :steps @step-vec})))

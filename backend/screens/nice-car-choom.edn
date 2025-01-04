@@ -1678,7 +1678,7 @@
    :grid-selected-background-color "#8879bc",
    :grid-font-color "#ffffff",
    :canvas-background-css
-   {:background-image "url(assets/2077shot.jpg)",
+   {:background-image "url(assets/backgrounds/2077shot.jpg)",
     :transition "all 0.6s ease-in-out",
     :background-color "#222222",
     :background-size "cover"},

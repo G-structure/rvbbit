@@ -14,6 +14,7 @@
    [clojure.java.jdbc         :as jdbc]
    [flowmaps.db               :as flow-db]
    [clojure.data              :as data]
+   [rvbbit-backend.build-id :as build]
    [datalevin.core :as d]
    [rvbbit-backend.external   :as ext]
    [rvbbit-backend.endpoints   :as edp]
@@ -103,7 +104,7 @@
 (defonce nrepl-usage (atom []))
 (defonce nrepl-intros-usage (atom []))
 
-
+(def host-info (atom nil))
 
 (defonce client-panels-in-sync? (atom {})) ;; client-name bool
 
@@ -1143,6 +1144,7 @@
         client-subs (get-in cstats [client-name :client-subs])
         msgs-per-recent (get-in @db/ack-scoreboard [client-name :recent-messages-per-second])
         msgs (get-in @db/ack-scoreboard [client-name :messages-per-second])
+        ;;_ (ut/pp [:ack client-name memory])
         mem-mb (ut/bytes-to-mb (get memory :mem_used))
         _ (swap! client-metrics assoc client-name
                  (conj (get @client-metrics client-name [])
@@ -2689,20 +2691,34 @@
           {k (let [seconds-ago (int (/ (- (System/currentTimeMillis) (get-in v [:last-ack 0] 0)) 1000))
                    never?      (nil? (get-in v [:last-ack 0]))
                    last-seconds (if never? -1 seconds-ago)
+                   runtime (java.lang.Runtime/getRuntime)
+                   total-memory (.totalMemory runtime)
+                   free-memory (.freeMemory runtime)
+                   used-memory (/ (- total-memory free-memory) (* 1024 1024))
                    _ (swap! db/ack-scoreboard assoc-in [k :last-seen-seconds-ago] last-seconds)]
                (-> v
                    ;(assoc :queue-distro (frequencies (get @queue-distributions k)))
                    ;(assoc :queue-size (count @(get @client-queues k [])))
-                   (assoc :client-latency (ut/avg (take-last 20 (get @client-latency k []))))
-                   (assoc :server-subs (count (keys (get @db/atoms-and-watchers k))))
+                   (assoc :memory (if (= k :rvbbit) (ut/nf (Math/floor used-memory)) (get v :memory)))
+                   (assoc :client-subs (cond (= k :rvbbit)
+                                           (try (apply + (for [[_ v] @db/atoms-and-watchers] (count (keys v)))) (catch Exception _ -1))
+                                             (= k :rvbbit-rest)
+                                             (count (vals @db/subscriptions))
+                                           :else (get v :client-subs))) ;;  ;; (last @watcher-usage)
+                   (assoc :client-latency (if (= k :rvbbit) 0
+                                           (ut/avg (take-last 20 (get @client-latency k [])))))
+                   (assoc :server-subs (+ (count (keys (get @db/atoms-and-watchers k)))
+                                          (if (= k :rvbbit) (count (keys @db/last-signals-atom-stamp)) 0)))
                    (assoc :last-seen-seconds last-seconds)
                    (dissoc :client-sub-list)
                    (assoc :last-seen (cond (< seconds-ago 0)       "not since boot"
-                                           (= k :rvbbit) "n/a"
-                                           :else                   (ut/format-duration-seconds seconds-ago)))))})));)
+                                           (or (= k :rvbbit-rest) (= k :rvbbit)) "n/a"
+                                           :else                   (ut/format-duration-seconds seconds-ago)))))})))
 
 (declare flow-kill!)
 (declare alert!)
+
+(ut/pp @db/ack-scoreboard)
 
 ;; {:client-name {:solver-name {:running? true}}}
 (defn stop-solver [solver-name]
@@ -7383,7 +7399,7 @@
                              (not (cstr/includes? (str connection-id) "system"))
                              (not (cstr/ends-with? (str (first ui-keypath)) "-search-like"))
                              (not error-result?)
-                             (not (cstr/includes? (str client-name) "*headless"))
+                             (not (cstr/includes? (str client-name) "headless"))
                              (not= connection-id client-name)
                              (not= client-name :rvbbit)
                              (not (cstr/includes? (str panel-key) "reco-preview"))
@@ -8471,14 +8487,14 @@
             {(keyword (str "color" b))
              (str "\u001b[38;5;" b "m")}))))
 
-;;  (ut/pp [:generate-bright-256-colors (count (generate-bright-256-colors))])
+;;  (ut/pp [:generate-bright-256-colors (generate-bright-256-colors)])
 
 ;; (defn generate-rgb-bg-color [r g b]
 ;;   {:pre [(every? #(and (integer? %) (<= 0 % 255)) [r g b])]}
 ;;   (str "\u001b[48;2;" r ";" g ";" b "m"))
 
 (def ansi-colors ;; extended-colorss
-  (merge ansi-colors-ext
+  (merge ;;ansi-colors-ext
          (generate-bright-256-colors)
          {:orange (generate-256-color 208)
           :pink (generate-256-color 13)
@@ -9191,9 +9207,12 @@
                       :sockets (count @wl/sockets)
                       :avg-cpu (ut/avgf @db/cpu-usage)])]))
 
+
 (defn normalize [data min-val max-val]
-  (let [range (- max-val min-val)]
-    (map #(-> % (- min-val) (/ range)) data)))
+  (if (= min-val max-val)
+    (repeat (count data) 0.5)
+    (let [range (- max-val min-val)]
+      (map #(-> % (- min-val) (/ range)) data))))
 
 (defn sparkline [data]
   (let [blocks ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"]
@@ -9209,7 +9228,7 @@
 (defn print-client-stats-vector []
   (let [cwidth (ut/get-terminal-width)
         colors (vec (vals ansi-colors))
-        clients-vec (filterv #(not (= (first %) :rvbbit)) @db/ack-scoreboard)
+        clients-vec (filterv #(not (= (first %) :!!!rvbbit)) @db/ack-scoreboard)
         client-maps (sort-by (fn [[k _]] (count (get @client-metrics k))) clients-vec)
         reset-code "\u001b[0m"]
     (println)
@@ -9218,9 +9237,15 @@
     (mapv
      (fn [[cid x]]
        (let [color-index (mod (hash cid) (count colors))
-             color (nth colors color-index)
+            ;;  color (nth colors color-index)
+             color (if (= cid :rvbbit)
+                    ;;  (generate-256-color 13)
+                     (get (generate-bright-256-colors) :color219)
+                     (nth colors color-index))
              cc (fn [s] (str color (str s) reset-code))
-             mem-vec (mapv :mem-mb (get @client-metrics cid))
+             mem-vec (if (= cid :rvbbit)
+                       (average-in-chunks (take-last (* cwidth 15) @db/mem-usage) 15)
+                       (mapv :mem-mb (get @client-metrics cid)))
              spark-vec (take-last cwidth mem-vec)]
          (ut/pp [(str color "web-client-" (.indexOf clients-vec [cid x]) reset-code)
                  (cc (cstr/replace
@@ -9229,7 +9254,7 @@
                   :up (:uptime x) :mps (:messages-per-second x)}) "\"" "'")) cid])
          (try (if (ut/ne? mem-vec)
                 (println (str color (sparkline spark-vec) reset-code))
-                (println (str color "(no data)" reset-code)))
+                (println (str color (if (= cid :rvbbit-rest) "(n/a)" "(no data)") reset-code)))
               (catch Exception _ (println (str color "(data error*)" reset-code))))))
      client-maps)
     (println "------------------------------------------------------------------------------------------------------------------------")
@@ -9260,19 +9285,28 @@
         colors (if hex [(ut/hex-to-ansi hex)] (vec (vals ansi-colors)))
         clients-vec (filterv #(= (first %) client-name) @db/ack-scoreboard)
         client-maps (sort-by (fn [[k _]] (count (get @client-metrics k))) clients-vec)
+        ;; _ (ut/pp [:client-maps client-maps])
         reset-code "\u001b[0m"
         lines (mapv
                (fn [[cid _]]
                  (let [color-index (mod (hash cid) (count colors))
-                       color (nth colors color-index)
-                       mem-vec (mapv :mem-mb (get @client-metrics cid))
+                       color (if (= cid :rvbbit)
+                               ;(generate-256-color 13)
+                               (get (generate-bright-256-colors) :color219)  ;;146 219
+                               (nth colors color-index))
+                      ;;  mem-vec (mapv :mem-mb (get @client-metrics cid))
+                       mem-vec (if (= cid :rvbbit)
+                                 (average-in-chunks (take-last (* cwidth 15) @db/mem-usage) 15)
+                                 (mapv :mem-mb (get @client-metrics cid)))
+                      ;;  _ (ut/pp [:client-spark client-name (get @client-metrics cid)])
                        spark-vec (take-last cwidth mem-vec)
                        line (try
                               (if (ut/ne? mem-vec)
                                 (str color (sparkline spark-vec) reset-code)
-                                (str color "(no data)" reset-code))
-                              (catch Exception _
-                                (str color "(data error*)" reset-code)))]
+                                (str color (if (= cid :rvbbit-rest) "(n/a)" "(no data)") reset-code))
+                              (catch Exception e
+                                (do (println (str color "(data error*) " e reset-code))
+                                    (str color "(data error*) " e reset-code))))]
                    ;; Remove the println since we want to return the string
                    line))
                client-maps)]
@@ -9281,7 +9315,8 @@
       (first lines)
       "")))
 
-;; (print-client-spark ":beneficial-lilac-mallard-31" 25)
+;; (print-client-spark ":rvbbit" 25)
+;; (print-client-spark ":marvelous-short-ferret-6" 25)
 
 ;; (print-client-stats-vector)
 
@@ -9306,7 +9341,7 @@
             thread-mx-bean (java.lang.management.ManagementFactory/getThreadMXBean)
             thread-count (.getThreadCount thread-mx-bean)
             booted? (= @stats-cnt 0)
-            ttl (try (apply + (for [[_ v] @db/atoms-and-watchers] (count (keys v)))) (catch Exception _ -1))
+            ttl (try (apply + (for [[_ v] @db/atoms-and-watchers] (count (keys v)))) (catch Exception _ -1)) ;; (last @watcher-usage)
             ;;_ (swap! stats-shadow conj {:mem mm :tick (count @stats-shadow) :threads thread-count :subs ttl :load sys-load})
 
             chart-view (fn [data]
@@ -9351,8 +9386,10 @@
 
             ack-scoreboardv (into {}
                                   (for [[k v] (client-statuses)
-                                        :when (not= (get v :last-seen-seconds) -1)]
+                                        ;:when (not= (get v :last-seen-seconds) -1)
+                                        ]
                                     {k (ut/deselect-keys v [:booted :last-ack :last-push :last-seen-seconds-ago])}))
+            ;; _ (ut/pp [:ack ack-scoreboardv])
             cli-rows
             (vec
              (for [[k v] ack-scoreboardv
@@ -9416,10 +9453,29 @@
              ;:sniffs_run                 @cruiser/sniffs
              :sys_load                   (as-double sys-load) ;;sys-load to 2 decimal places
              }
+            stats-map (-> jvm-stats-vals
+                          (assoc :server_name server-name)
+                          (assoc :build  (str build/build-date " " build/build-id "-" build/build-number))
+                          (assoc :host_name (get @host-info :host))
+                          (assoc :clients (count (keys ack-scoreboardv))))
             _ (reset! last-stats-row jvm-stats-vals)
             insert-sql {:insert-into [:jvm_stats] :values [jvm-stats-vals]}
-            _ (swap! db/server-atom assoc :uptime (ut/format-duration-seconds seconds-since-boot))
-            _ (swap! db/server-atom assoc :server-name server-name)
+            _ (swap! db/server-atom merge
+                     {:uptime (ut/format-duration-seconds seconds-since-boot)
+                      :server-name server-name
+                      :stats stats-map
+                      :small-stats (select-keys stats-map
+                                                [:server_name :clients :used_memory_mb :build
+                                                 :sys_load :thread_count :ws_peers :host_name
+                                                 :uptime_seconds])})
+            ;; _ (ut/pp stats-map)
+            ;; _ (swap! db/server-atom assoc :uptime (ut/format-duration-seconds seconds-since-boot))
+            ;; _ (swap! db/server-atom assoc :server-name server-name)
+            ;; _ (swap! db/server-atom assoc :stats stats-map)
+            ;; _ (ut/pp [:stats-map (get @db/server-atom :stats)])
+            ;; _ (swap! db/server-atom assoc :small-stats
+            ;;          (select-keys stats-map [:server_name :clients :used_memory_mb :sys_load :thread_count :ws_peers :uptime_seconds]))
+            ;; _ (ut/pp [:small-stats? (select-keys stats-map [:server_name :clients :used_memory_mb :sys_load :thread_count :ws_peers :uptime_seconds])])
             ;flow-status-map (flow-statuses) ;; <--- important, has side effects, TODO refactor into timed instead of hitched to jvm console stats output
             ;pool-sizes (query-pool-sizes)
             ]
@@ -9763,9 +9819,18 @@
 
 
 
+(defn capture-host-info [request]
+  (when-let [host (or (get-in request [:headers "x-forwarded-host"])
+                      (get-in request [:headers "host"]))]
+    (reset! host-info {:host host
+                       :scheme (name (or (get request :scheme) :http))
+                       :timestamp (System/currentTimeMillis)})))
 
-
-
+(def host-capture-interceptor
+  {:name ::host-capture
+   :enter (fn [context]
+            (capture-host-info (:request context))
+            context)})
 
 (defn resolve-user-space-dir []
   (let [working-dir (System/getProperty "user.dir")
@@ -9785,7 +9850,11 @@
     (ring-resp/not-found "User space directory not configured")))
 
 (defn static-root [request] (ring-resp/content-type (ring-resp/resource-response "index.html" {:root "public"}) "text/html"))
-(def common-interceptors [(body-params/body-params) http/html-body])
+;; (def common-interceptors [(body-params/body-params) http/html-body])
+(def common-interceptors
+  [(body-params/body-params)
+   host-capture-interceptor
+   http/html-body])
 
 (def routes
   #{["/" :get (conj common-interceptors `static-root)]
@@ -9805,8 +9874,6 @@
     ["/reactor/:type-keyword/:keypath-keyword" :get `db/get-reactor-value :route-name :get-reactor-value]
     ["/reactor/:type-keyword/:keypath-keyword" :put `db/put-reactor-value :route-name :put-reactor-value]
     ["/reactor-hook/:type-keyword/:keypath-keyword" :post `db/manage-hook :route-name :manage-reactor-hook]})
-
-
 
 (def web-server-port 8888)
 

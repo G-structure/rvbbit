@@ -727,6 +727,7 @@
 
 (defn clover-lookup
   [client-name flow-key & [signal?]]
+  ;; (ut/pp [:clover-lookup client-name])
   (let [flow-key-orig           flow-key
         ;flow-key-orig           (keyword (cstr/replace (str flow-key-orig) ":" "")) ;; normalized the old weird colon inserted clover kws
         flow-key-sub            (replace-flow-key-vars flow-key client-name)
@@ -922,7 +923,7 @@
 
 (defn get-value [namespaced-key client-name]
   (let [vv (clover-lookup client-name namespaced-key)]
-    (ut/pp [:reactor-REST-get-value! namespaced-key :from client-name :value vv])
+    ;; (ut/pp [:reactor-REST-get-value! namespaced-key :from client-name :value vv])
     vv))
 
 (defn set-value! [namespaced-key value client-name]
@@ -967,7 +968,7 @@
             namespaced-key  (construct-namespaced-keyword type-keyword keypath-keyword)
             value (get-value namespaced-key client-name)]
         ;; We don't validate type-keyword for GET requests. it'd just return nil
-        (ut/ppln [:get-reactor-value namespaced-key :from client-name])
+        ;; (ut/pp [:get-reactor-value namespaced-key :from client-name])
         (send-edn-success {:value value})))))
 
 (defn put-reactor-value [request]
@@ -992,7 +993,7 @@
                                   (catch Exception e
                                     (send-edn-success {:error (str "Error parsing request body: " (.getMessage e))})))
                 _ (set-value! namespaced-key value client-name)]
-            (ut/ppln [:put-reactor-value namespaced-key value])
+            (ut/pp [:put-reactor-value namespaced-key value])
             (send-edn-success {:status "success"})))))))
 
 
@@ -1017,10 +1018,37 @@
 ;;     (swap! subscriptions update kkey disj callback-url)
 ;;     (ut/ppln [:unsubscribed kkey callback-url])))
 
-(def subscriptions (fpop/thaw-atom {} "./defs/rest-subscriptions.edn"))
+(def subscriptions (fpop/thaw-atom {} "defs/rest-subscriptions.edn"))
+
+;; (ut/pp @subscriptions)
+;; (swap! subscriptions dissoc :server/small-stats)
+
+;; (defn trigger-hooks [key new-value]
+;;   ;; (ut/pp [:trigger-hooks  key])
+;;   (when-let [callbacks (get @subscriptions key)]
+;;     (doseq [callback-url callbacks]
+;;       (future
+;;         (try
+;;           (http/post callback-url
+;;                      {:body (json/write-str {:reactor-key key
+;;                                              :value new-value})
+;;                       :content-type :json})
+;;           (ut/pp ["⚓" :hook-triggered callback-url :from key])
+;;           (catch Exception e
+;;             (ut/pp ["⚓" :hook-error callback-url (.getMessage e)])))))))
+
+;; (defn subscribe-hook [type-keyword keypath-keyword callback-url client-name]
+;;   (let [kkey (keyword (cstr/replace (str type-keyword "/" keypath-keyword) ":" ""))]
+;;     (swap! subscriptions update kkey
+;;            (fn [urls]
+;;              (vec (distinct (conj (or urls []) callback-url)))))
+;;     (trigger-hooks kkey (get-value kkey client-name)) ;; kick it for initial value
+;;     (ut/pp ["⚓" :REST-subscribed kkey callback-url :from client-name])))
 
 (defn trigger-hooks [key new-value]
+  ;; (ut/pp [:trigger-hooks key @subscriptions])
   (when-let [callbacks (get @subscriptions key)]
+    ;(ut/pp ["⚓" :trigger-hooks-debug key new-value (get @subscriptions key)]) ;; Debug log
     (doseq [callback-url callbacks]
       (future
         (try
@@ -1028,24 +1056,31 @@
                      {:body (json/write-str {:reactor-key key
                                              :value new-value})
                       :content-type :json})
-          (ut/ppln [:hook-triggered callback-url])
+          (ut/pp ["⚓" :hook-triggered callback-url :from key])
           (catch Exception e
-            (ut/ppln [:hook-error callback-url (.getMessage e)])))))))
+            (ut/pp ["⚓" :hook-error callback-url (.getMessage e)])))))))
 
 (defn subscribe-hook [type-keyword keypath-keyword callback-url client-name]
-  (let [kkey (keyword (cstr/replace (str type-keyword "/" keypath-keyword) ":" ""))]
+  (let [;; Preserve the original format of the key
+        kkey (if (cstr/includes? (str keypath-keyword) "/")
+               ;; If keypath already contains /, use it as is
+               (keyword (str type-keyword "/" keypath-keyword))
+               ;; Otherwise construct it normally
+               (keyword (str (name type-keyword) "/" (name keypath-keyword))))]
+    (add-watcher [] client-name (fn [& stuff] (str "") ) kkey :param-sub)
+    (ut/pp ["⚓" :debug-subscribe kkey]) ;; Debug log
     (swap! subscriptions update kkey
            (fn [urls]
              (vec (distinct (conj (or urls []) callback-url)))))
-    (trigger-hooks kkey (get-value kkey client-name)) ;; kick it for initial value
-    (ut/ppln [:REST-subscribed kkey callback-url :from client-name])))
+    (trigger-hooks kkey (get-value kkey client-name))
+    (ut/pp ["⚓" :REST-subscribed kkey callback-url :from client-name])))
 
 (defn unsubscribe-hook [type-keyword keypath-keyword callback-url client-name]
   (let [kkey (keyword (cstr/replace (str type-keyword "/" keypath-keyword) ":" ""))]
     (swap! subscriptions update kkey
            (fn [urls]
              (vec (remove #(= % callback-url) (or urls [])))))
-    (ut/ppln [:REST-unsubscribed kkey callback-url :from client-name])))
+    (ut/pp ["⚓" :REST-unsubscribed kkey callback-url :from client-name])))
 
 (defn manage-hook [request]
   (let [type-str    (get-in request [:path-params :type-keyword])
@@ -1067,8 +1102,37 @@
           (do (subscribe-hook type-keyword keypath-keyword callback-url client-name)
               (send-edn-success {:status "subscribed"})))))))
 
+;; (defn bootstrap-subscriptions! []
+;;   (ut/pp ["🔱🔱🔱" :bootstrapping-saved-subscriptions (count @subscriptions) :hooks])
+;;   (doseq [[key callbacks] @subscriptions]
+;;     (let [;; Instead of splitting on first /, get everything before first / and after
+;;           type-str (first (cstr/split (name key) #"/"))
+;;           keypath-str (cstr/join "/" (rest (cstr/split (name key) #"/"))) ;; preserve everything after first /
+;;           type-keyword (keyword type-str)
+;;           keypath-keyword (keyword keypath-str)]
+;;       (doseq [callback-url callbacks]
+;;         (try
+;;           (let [current-value (get-value key :rvbbit-rest)]
+;;             (http/post callback-url
+;;                        {:body (json/write-str {:reactor-key key
+;;                                                :value current-value})
+;;                         :content-type :json})
+;;             (ut/pp ["🔱🔱🔱" :bootstrapped-hook key :to callback-url]))
+;;           (catch Exception e
+;;             (ut/pp ["🔱🔱🔱" :bootstrap-hook-error key callback-url (.getMessage e)]))))))
+;;   (ut/pp ["🔱🔱🔱" :bootstrap-complete]))
+
+;; (bootstrap-subscriptions!)
+
+;;curl -X POST "http://localhost:8888/reactor-hook/server/stats"  -H "Content-Type: application/json" -d '{"callback-url": "https://run.rvbbit.com/api/stats"}'
+;;curl -X POST "http://localhost:8888/reactor-hook/server/small-stats"  -H "Content-Type: application/json" -d '{"callback-url": "https://run.rvbbit.com/api/stats"}'
+;;curl -X POST "http://localhost:8888/reactor-hook/server/small-stats"  -H "Content-Type: application/json" -d '{"callback-url": "https://run.rvbbit.com/api/stats", "unsubscribe": true}'
+
+
 ;; (ut/pp [:hooks @subscriptions]) ;; persist?
 ;; (ut/pp [:hooks @atoms-and-watchers])
+
+;;curl -X POST "http://localhost:8888/reactor-hook/server/stats"  -H "Content-Type: application/json" -d '{"callback-url": "https://run.rvbbit.com/api/stats"}'
 
   ;; Example: Subscribe to changes
   ;; curl -X POST "http://localhost:8888/reactor-hook/time/second"  -H "Content-Type: application/json" -d '{"callback-url": "http://localhost:8500"}'

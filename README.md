@@ -3,6 +3,8 @@
 
 > **In a world of corporate, conservative, “safe” BI tools that keep you trapped in the 1990s, Rabbit is the daring leap into a cyberpunk, hyper-reactive future.**
 
+[Link]: # 'Link with example title.'
+
 Rabbit is a **hyper-composable** data platform that feels more like a **creative game engine** than a basic “dashboard” utility. Built on Clojure and SQL—but open to everyone—Rabbit gives you a direct-manipulation canvas where **drag-and-drop** meets **livecoding**, so you can shape, filter, pivot, visualize, and automate data exactly how you want.
 
 ![alt text](docs/rvbbit-dev-mosiac.jpg)

@@ -3,19 +3,11 @@
  :wss-config ["ws" 3030],
  :default-col-widths
  {:block-494 {:jvm-stats-drag-40 100},
-  :block-61 {:new-raw-sql-2 100},
-  :block-8179 {:client-stats-drag-33 130},
-  :block-62 {:all-superstore-3 100},
+  :block-8179 {:client-stats-drag-33 141},
   :block-3438 {:new-query-1 100},
-  :reco-preview-c-556115396 {:cnt-all-superstore-1-c-556115396 261},
-  :reco-preview-c--1134771568 {:query1-c--1134771568 130},
-  :block-70 {:query7 105},
-  :block-68 {:cnt-new-raw-sql-2 211},
-  :block-6 {:query2 130},
-  :block-5 {:cnt-all-superstore-1 261},
-  :reco-preview-c-984656818 {:all-superstore-c-984656818 100},
-  :block-69 {:cnt-all-superstore-3 261},
-  :block-3 {:all-superstore-1 100}},
+  :system-connections-list* {:connections-sys 126},
+  :system-tables-list* {:tables-sys ##Inf},
+  :system-fields-list* {:fields-sys ##Inf}},
  :runstream-drops nil,
  :tabs
  ["welcome to the party pal" "byzantium rabbit" "color test" "sys atom sizes"],
@@ -23,40 +15,33 @@
  :server nil,
  :runstreams nil,
  :buffy? false,
- :memory [2147089333 1953934065 4294705152],
+ :memory [777943356 688491616 4294705152],
  :sched
- {:gen-viz-553 5855,
-  :new-query 5855,
-  :cpu-query1 5855,
-  :new-query-1 5855,
-  :client-stats-drag-33 5820,
-  :cnt-33 5845,
-  :jvm-stats-drag-40 5855,
-  :gen-viz-1002 5855,
-  :gen-viz-1002-clone-38 5855},
- :client-name :productive-baby-blue-wasp-38,
+ {:gen-viz-553 66530,
+  :new-query 66530,
+  :cpu-query1 66530,
+  :new-query-1 66530,
+  :client-stats-drag-33 66490,
+  :cnt-33 66505,
+  :jvm-stats-drag-40 66530,
+  :gen-viz-1002 66530,
+  :gen-viz-1002-clone-38 66530},
+ :client-name :marvelous-short-ferret-6,
  :server-panels
  [:block-494
-  :block-64
-  :block-66
   :block-1956
   :block-9173
   :block-4808
-  :block-67
   :block
-  :block-4
   :block-10778
   :block-1242
-  :block-61
   :block-8179
   :block-397
   :block-7876
-  :block-5136
   :block-7568
   :block-9727
   :block-6697
   :block-1
-  :block-62
   :block-6590
   :block-7598
   :block-3628
@@ -64,108 +49,58 @@
   :block-5568
   :block-3438
   :block-10180
-  :block-7831
-  :block-488
   :block-3719
   :block-1430
   :block-901
   :block-12161
   :block-3218
-  :block-689
   :block-7665
   :block-10151
-  :block-7
   :block-9347
-  :block-70
   :block-8619
-  :block-68
-  :block-6
   :block-5806
   :block-11070
   :block-4109
-  :block-8193
-  :block-5
   :block-8083
-  :block-6676
-  :block-173
-  :block-10955
-  :block-65
-  :block-10081
-  :block-172
   :block-10067
-  :block-63
-  :block-60
-  :block-1400
-  :block-609
-  :block-69
-  :block-653
-  :block-350
   :block-3
-  :block-7349
   :block-8394
-  :block-411
-  :block-7312
   :block-1650
   :block-2
-  :block-703
   :block-4603],
  :flow-editor? true,
- :window {:w 2384, :h 1475},
+ :window {:w 2146, :h 1326},
  :ai-worker? false,
  :quake-console? false,
  :implicit-rowsets {:solver [nil]},
  :post-meta
- {:gen-viz-553 {:* {:rowcount 18}},
-  :superstore
-  {:category {:distinct 3},
-   :sales {:distinct 109},
-   :* {:rowcount 111},
-   :ship_date {:distinct 54},
-   :product_id {:distinct 108},
-   :city {:distinct 37},
-   :profit {:distinct 110},
-   :rrows {:distinct nil},
-   :state {:distinct 23},
-   :zipcode {:distinct 46},
-   :row_id {:distinct 111},
-   :region {:distinct 4},
-   :ship_mode {:distinct 3},
-   :order_id {:distinct 55},
-   :segment {:distinct 3},
-   :sub_category {:distinct 14},
-   :order_date {:distinct 54},
-   :quantity {:distinct 9},
-   :discount {:distinct 1},
-   :country {:distinct 1},
-   :customer_name {:distinct 52},
-   :product_name {:distinct 108},
-   :customer_id {:distinct 52}},
-  :rabbit-search-like {:* {:rowcount 498}},
-  :new-query {:* {:rowcount 19}},
+ {:rabbit-search-like {:* {:rowcount 498}},
+  :new-query {:* {:rowcount 5}},
   :new-query-1 {:* {:rowcount 50}},
-  :client-stats-drag-33 {:* {:rowcount 4}},
+  :client-stats-drag-33 {:* {:rowcount 3}},
   :cnt-33 {:* {:rowcount 1}},
-  :gen-viz-1002 {:* {:rowcount 18}},
-  :gen-viz-1002-clone-38 {:* {:rowcount 5}}},
+  :jvm_stats {:* {:rowcount 111}},
+  :rabbit-search-like-themes {:* {:rowcount 93}},
+  :connections-sys {:* {:rowcount 7}},
+  :gen-viz-1002-clone-38 {:* {:rowcount 16}}},
  :flow-estimates
- {:gen-viz-553 {:times 0.003, :run-id :gen-viz-553},
-  :new-query {:times 0.003, :run-id :new-query},
-  :gen-viz-8562 {:times 0.004, :run-id :gen-viz-8562},
-  :cpu-query1 {:times 0.004, :run-id :cpu-query1},
-  :new-query-1 {:times 0.004, :run-id :new-query-1},
+ {:fields-sys {:times 0.001, :run-id :fields-sys},
+  :gen-viz-553 {:times 0.01, :run-id :gen-viz-553},
+  :tables-sys {:times 0.001, :run-id :tables-sys},
+  :new-query {:times 0.008, :run-id :new-query},
+  :cpu-query1 {:times 0.007, :run-id :cpu-query1},
+  :new-query-1 {:times 0.007, :run-id :new-query-1},
   :client-stats-drag-33 {:times 0.001, :run-id :client-stats-drag-33},
   :cnt-33 {:times 0.001, :run-id :cnt-33},
-  :jvm-stats-drag-40 {:times 0.007, :run-id :jvm-stats-drag-40},
-  :block-8083-new-clojure-2 {:times 0.019, :run-id :block-8083-new-clojure-2},
-  :block-67-new-clojure-c-8823 {:times 0.008, :run-id :block-67-new-clojure-c-8823},
-  :gen-viz-1002 {:times 0.003, :run-id :gen-viz-1002},
-  :block-1430-new-clojure-1 {:times 0.013, :run-id :block-1430-new-clojure-1},
+  :jvm-stats-drag-40 {:times 0.015, :run-id :jvm-stats-drag-40},
+  :gen-viz-1002 {:times 0.01, :run-id :gen-viz-1002},
+  :jvm_stats {:times 0.007, :run-id :jvm_stats},
+  :block-1430-new-clojure-1 {:times 0.014, :run-id :block-1430-new-clojure-1},
+  :client_stats {:times 0.001, :run-id :client_stats},
   :rabbit-search-like-themes {:times 0.001, :run-id :rabbit-search-like-themes},
-  :cnt-all-superstore-1 {:times 0.003, :run-id :cnt-all-superstore-1},
-  :gen-viz-8011 {:times 0.004, :run-id :gen-viz-8011},
-  :gen-viz-1002-clone-38 {:times 0.013, :run-id :gen-viz-1002-clone-38},
-  :rabbit-search-like-screens {:times 0.001, :run-id :rabbit-search-like-screens},
-  :all-superstore-1 {:times 0.009, :run-id :all-superstore-1}},
+  :connections-sys {:times 0.003, :run-id :connections-sys},
+  :gen-viz-1002-clone-38 {:times 0.026, :run-id :gen-viz-1002-clone-38},
+  :rabbit-search-like-screens {:times 0.002, :run-id :rabbit-search-like-screens}},
  :screen-name "server-stats",
  :panel-hashes
  {:block-494 -995837245,
@@ -175,7 +110,7 @@
   :block 423392314,
   :block-10778 1563272471,
   :block-1242 -1023168918,
-  :block-8179 -1148361644,
+  :block-8179 -363078034,
   :block-397 -823059942,
   :block-7876 -1619895474,
   :block-7568 -1439900519,
@@ -203,6 +138,7 @@
   :block-4109 -864370447,
   :block-8083 468568373,
   :block-10067 -1151666386,
+  :block-3 -1293453658,
   :block-8394 -1296322521,
   :block-1650 1821330306,
   :block-2 1322895200,
@@ -213,16 +149,16 @@
  :snapshots nil,
  :recos-page 0,
  :rs-overrides-hashmap {},
- :user-params-hash 659496938,
+ :user-params-hash -45977605,
  :grid-recos? true,
- :session-hash -313366377,
+ :session-hash 1474072859,
  :resolved-queries
- {nil {:_last-run "08:03:18"},
+ {nil {:_last-run "10:29:05"},
   :gen-viz-553
   {:cache? false,
    :limit 18,
    :group-by [:ts],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :refresh-every 45,
    :from
    [[{:select
@@ -253,7 +189,7 @@
    :where [:= :client_name :*client-name-str],
    :limit 45,
    :group-by [:ts_hour],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :refresh-every 45,
    :from
    [{:select
@@ -301,7 +237,7 @@
   {:cache? false,
    :limit 60,
    :group-by [:ts1],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :refresh-every 45,
    :from
    [{:select
@@ -360,16 +296,16 @@
    {[:sys_load :heatmap-7696]
     {:logic true,
      :style
-     {:color [:heatmap ["#d4a4ec" "#bceca4"] 10 :desc],
+     {:color [:heatmap ["#2fb6d3" "#d34c2f"] 10 :desc],
       :border "1px solid #00000000",
       :_color "#ffffff"}},
     [:recent_messages_per_second :heatmap-2888]
     {:logic true,
      :style
-     {:color [:heatmap ["#d4a4ec" "#bceca4"] 10 :desc],
+     {:color [:heatmap ["#2fb6d3" "#d34c2f"] 10 :desc],
       :border "1px solid #00000000",
       :_color "#ffffff"}}},
-   :_last-run "08:03:21",
+   :_last-run "10:29:18",
    :refresh-every 45,
    :from [[:jvm_stats :zz596]],
    :order-by [[:ts :desc]],
@@ -381,9 +317,9 @@
    {[:* :highlight-8717]
     {:logic [:= :client_name :*client-name-str],
      :style
-     {:background-color [:str "#d4a4ec" "19"],
-      :border [:str "2px solid " "#d4a4ec" "77"]}}},
-   :_last-run "07:59:23",
+     {:background-color [:str "#2fb6d3" "19"],
+      :border [:str "2px solid " "#2fb6d3" "77"]}}},
+   :_last-run "10:23:26",
    :refresh-every 20,
    :col-widths
    {:server_subs 111,
@@ -395,12 +331,12 @@
     :client_latency 121,
     :ack 81,
     :client_name 231,
-    :mem_spark 263},
+    :mem_spark 310},
    :from [[:client_stats :ww254]],
    :order-by [[:client_name :asc]],
    :stacks
    [{:formula
-     "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 30))) rowset))",
+     "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 37))) rowset))",
      :idx 0,
      :stack-type "clojure",
      :name :clojure-fn-8384}],
@@ -414,8 +350,7 @@
     :push
     :recent_messages_per_second
     :server_subs
-    :memory
-    :ts]},
+    :memory]},
   :jvm-stats-drag-39
   {:select
    [:batches
@@ -469,7 +404,7 @@
       :order-by [[:client_name :asc]],
       :stacks
       [{:formula
-        "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 30))) rowset))",
+        "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 37))) rowset))",
         :idx 0,
         :stack-type "clojure",
         :name :clojure-fn-8384}],
@@ -483,10 +418,9 @@
        :push
        :recent_messages_per_second
        :server_subs
-       :memory
-       :ts]}
+       :memory]}
      :ssb99]],
-   :_last-run "08:03:21"},
+   :_last-run "10:23:37"},
   :jvm-stats-drag-40
   {:select
    [:thread_count
@@ -505,13 +439,13 @@
    :cache? false,
    :from [[:jvm_stats :kke192]],
    :order-by [[:ts1 :desc]],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :where [:>= :recent_batches_per_second 0]},
   :gen-viz-1002
   {:cache? false,
    :limit 18,
    :group-by [4],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :refresh-every 45,
    :from
    [{:select
@@ -560,12 +494,12 @@
          (merge
            row
            {:diff (if (= idx 0) (str (Math/round mb) " MB") (str pos diff))}))))},
-  :shape-rotation-maps-sys {:_last-run "08:03:24"},
+  :shape-rotation-maps-sys {:_last-run "10:29:19"},
   :gen-viz-1002-clone-38
   {:cache? false,
    :limit 24,
    :group-by [:ts1],
-   :_last-run "08:03:21",
+   :_last-run "10:29:17",
    :refresh-every 45,
    :from
    [[{:group-by [:ts1],
@@ -623,7 +557,7 @@
  :panels
  {nil
   {:queries
-   {:shape-rotation-maps-sys {:_last-run "08:03:24"}, nil {:_last-run "08:03:18"}}},
+   {:shape-rotation-maps-sys {:_last-run "10:29:19"}, nil {:_last-run "10:29:05"}}},
   :block-494
   {:name "select-all-jvm_stats",
    :w 18,
@@ -652,7 +586,7 @@
      :cache? false,
      :from [[:jvm_stats :kke192]],
      :order-by [[:ts1 :desc]],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :where [:>= :recent_batches_per_second 0]}},
    :tab "welcome to the party pal",
    :minimized? false},
@@ -668,7 +602,7 @@
     {:cache? false,
      :limit 60,
      :group-by [:ts1],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :refresh-every :param/refresh-timer,
      :from [:query/jvm-stats-drag-40],
      :order-by [[:ts1 :desc]],
@@ -824,7 +758,7 @@
     {:select [[[:count 1] :rowcnt]],
      :refresh-every 35,
      :from [[:query/client-stats-drag-33 :ssb99]],
-     :_last-run "08:03:21"}},
+     :_last-run "10:23:37"}},
    :tab "welcome to the party pal",
    :views
    {:hey
@@ -878,7 +812,7 @@
     {:cache? false,
      :limit 18,
      :group-by [4],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :refresh-every :param/refresh-timer,
      :from [:query/jvm-stats-drag-40],
      :order-by [[4 :desc]],
@@ -1024,12 +958,12 @@
   {:stacks-meta
    {:client-stats-drag-33
     [{:formula
-      "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 30))) rowset))",
+      "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 37))) rowset))",
       :result-field :clojure-fn-8384,
       :error nil,
       :ast-raw nil,
       :related-fields [:client_name],
-      :duration-ms 2.08912,
+      :duration-ms 1.852305,
       :fields-added [:mem_spark]}]},
    :name "select-all-client_stats",
    :w 32,
@@ -1046,7 +980,7 @@
        :style
        {:background-color [:str :param/theme-color1 "19"],
         :border [:str "2px solid " :param/theme-color1 "77"]}}},
-     :_last-run "07:59:23",
+     :_last-run "10:23:26",
      :refresh-every 20,
      :col-widths
      {:server_subs 111,
@@ -1058,12 +992,12 @@
       :client_latency 121,
       :ack 81,
       :client_name 231,
-      :mem_spark 263},
+      :mem_spark 310},
      :from [[:client_stats :ww254]],
      :order-by [[:client_name :asc]],
      :stacks
      [{:formula
-       "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 30))) rowset))",
+       "(fn [rowset] (mapv #(assoc % :mem_spark (str (rvbbit-backend.websockets/print-client-spark (get % :client_name) 37))) rowset))",
        :idx 0,
        :stack-type "clojure",
        :name :clojure-fn-8384}],
@@ -1077,8 +1011,7 @@
       :push
       :recent_messages_per_second
       :server_subs
-      :memory
-      :ts]}},
+      :memory]}},
    :tab "welcome to the party pal"},
   :block-397
   {:h 5,
@@ -1103,7 +1036,7 @@
      :where [:= :client_name :*client-name-str],
      :limit 45,
      :group-by [:ts_hour],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :refresh-every :param/refresh-timer,
      :from
      [{:select
@@ -1232,7 +1165,7 @@
     {:cache? false,
      :limit 18,
      :group-by [:ts],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :refresh-every :param/refresh-timer,
      :from [[:query/jvm-stats-drag-40 :aa45]],
      :order-by [[:ts :desc]],
@@ -1474,7 +1407,7 @@
        {:color [:heatmap [:param/theme-color1 :param/theme-color2] 10 :desc],
         :border "1px solid #00000000",
         :_color "#ffffff"}}},
-     :_last-run "08:03:21",
+     :_last-run "10:29:18",
      :refresh-every :param/refresh-timer,
      :from [[:jvm_stats :zz596]],
      :order-by [[:ts :desc]],
@@ -1595,7 +1528,7 @@
     {:cache? false,
      :limit 24,
      :group-by [:ts1],
-     :_last-run "08:03:21",
+     :_last-run "10:29:17",
      :refresh-every :param/refresh-timer,
      :from
      [[{:group-by [:ts1],
@@ -1989,6 +1922,27 @@
        :child
        "recent msg-per-sec"]]]},
    :queries {}},
+  :block-3
+  {:w 13,
+   :h 13,
+   :selected-view :vv3,
+   :views
+   {:vv3
+    [:box
+     :size
+     "auto"
+     :align
+     :center
+     :justify
+     :center
+     :style
+     {:font-size "19px", :color :theme/editor-outer-rim-color}
+     :child
+     [:edn :server/stats]]},
+   :leaf-drop [:fresh :fresh-clover],
+   :tab "byzantium rabbit",
+   :root [3 1],
+   :name "block"},
   :block-8394
   {:h 9,
    :w 6,
@@ -2072,11 +2026,10 @@
      [[:box :child [:number :jvm-stats-drag-40/ws_peers.0]]
       [:box :style {:font-size "18px", :margin-top "-10px"} :child "websockets"]]]},
    :queries {}}},
- :hidden-tabs [],
  :materialized-theme
  {:codemirror-theme "rvbbit-dynamic",
   :editor-param-background-color "#000000",
-  :pop-2 "#c42ca4",
+  :pop-2 "#c44ca9",
   :base-block-style
   {:text-shadow "4px 4px 4px #00000088",
    :border-radius "12px 12px 12px 12px",
@@ -2120,25 +2073,25 @@
   :running-gif "images/running.gif",
   :base-block-color-selected "#00030a",
   :block-title-font-color "#ffffff",
-  :base-block-color "#18092882",
-  :editor-rim-color "#0da9d399",
+  :base-block-color "#1a0c2382",
+  :editor-rim-color "#c44ca999",
   :base-block-filter-selected
   "drop-shadow(0.35rem 0.35rem 0.4rem #8dceff) drop-shadow(-0.35rem -0.35rem 0.4rem #8dceff)",
   :vega-default-color-scheme {:scheme "pastel2"},
   :data-colors
-  {"float" "#d87489",
-   "boolean" "#24fffd",
-   "map" "#1cfcd5",
-   "list" "#a49011",
-   "string" "#ffffff",
-   "any" "#d04f00",
-   "vector" "#8d00e6",
-   "keyword" "#d5eca4",
-   "rabbit-code" "#0dd36e",
-   "datetime" "#72139f",
-   "integer" "#ab50e7",
-   "unknown" "#0c8c26",
-   "date" "#073822"},
+  {"float" "#4cc483",
+   "boolean" "#15ee54",
+   "map" "#2fd336",
+   "list" "#195280",
+   "string" "#8185e0",
+   "any" "#5e227c",
+   "vector" "#23ca76",
+   "keyword" "#eb63e5",
+   "rabbit-code" "#8b1b5d",
+   "datetime" "#662e25",
+   "integer" "#603cd1",
+   "unknown" "#601d33",
+   "date" "#1b0c30"},
   :editor-grid-selected-font-color "#000000",
   :monospaced-font "JetBrains Mono",
   :editor-grid-selected-background-color "#dc9cb0",
@@ -2171,14 +2124,13 @@
     :ticks
     {:line {:stroke "#ffffff60"}, :text {:fill "#ffffff60", :font-weight 700}}},
    :grid {:line {:stroke "#ffffff", :strokeWidth 0, :strokeDasharray "0 0"}}},
-  :editor-outer-rim-color "#0da9d3",
+  :editor-outer-rim-color "#c44ca9",
   :grid-selected-font-color "#000000",
   :block-title-selected-font-color "#ffffff",
   :grid-selected-background-color "#a3d3ff",
   :grid-font-color "#ffffff",
   :canvas-background-css
-  {:background-image
-   "url(assets/openai-images/b64-image3-66502-83873-4k.webp-q10.jpg)",
+  {:background-image "url(assets/openai-images/monster-blur-cubism.jpg)",
    :transition "all 0.8s ease-in-out",
    :background-size "cover",
    :background-blend-mode "hard-light",
@@ -2190,22 +2142,22 @@
   :block-tab-selected-font-color "#c9d1ff",
   :editor-background-color "#000006",
   :editor-grid-font-color "#ffffff",
-  :pop-1 "#122764"},
+  :pop-1 "#265491"},
  :selected-block "none!",
  :theme-colors-hashmap
- {"float" "#d87489",
-  "boolean" "#24fffd",
-  "map" "#1cfcd5",
-  "list" "#a49011",
-  "string" "#ffffff",
-  "any" "#d04f00",
-  "vector" "#8d00e6",
-  "keyword" "#d5eca4",
-  "rabbit-code" "#0dd36e",
-  "datetime" "#72139f",
-  "integer" "#ab50e7",
-  "unknown" "#0c8c26",
-  "date" "#073822"},
+ {"float" "#4cc483",
+  "boolean" "#15ee54",
+  "map" "#2fd336",
+  "list" "#195280",
+  "string" "#8185e0",
+  "any" "#5e227c",
+  "vector" "#23ca76",
+  "keyword" "#eb63e5",
+  "rabbit-code" "#8b1b5d",
+  "datetime" "#662e25",
+  "integer" "#603cd1",
+  "unknown" "#601d33",
+  "date" "#1b0c30"},
  :solver-fn nil,
  :click-param
  {:blocks-sys
@@ -2220,21 +2172,21 @@
    :query_names ""},
   :db-conn-drag-13.* {:db_conn [":honey-format"]},
   :render-hash
-  {:block-494 571466905,
+  {:block-494 1680600118,
    :block-2676 -1361379395,
-   :block-1956 1253525017,
+   :block-1956 -1733174016,
    :block-9173 341139118,
-   :block-4808 -1862617250,
-   :block 1521646723,
+   :block-4808 -492733033,
+   :block -1800472545,
    :block-4 -2032186613,
    :block-1242 187430372,
-   :block-8179 -1278145894,
+   :block-8179 1836988718,
    :block-12071 -1071283754,
    :block-397 212179235,
-   :block-7876 -1798376276,
+   :block-7876 -850510138,
    :block-8356 1645799682,
    :block-7568 -1223640206,
-   :block-9727 291914831,
+   :block-9727 -1226710054,
    :block-11587 -1463692069,
    :block-6697 570457148,
    :block-1 -1735647748,
@@ -2242,38 +2194,39 @@
    :block-6590 -701347443,
    :block-2784 1553075196,
    :block-981 892463129,
-   :block-3438 -1194751520,
-   :block-10180 1242605172,
+   :block-3438 2130094356,
+   :block-10180 124104362,
    :block-3719 -878131517,
-   :block-901 -1992958838,
-   :block-12161 -1856161302,
-   :block-3218 -327396319,
+   :block-901 -864364069,
+   :block-12161 1869042648,
+   :block-3218 -266207900,
    :block-7665 -1764147847,
    :block-7259 -809048244,
    :block-2388 699820586,
    :block-7 1247924621,
+   :reco-preview-c-1988388931 1277275936,
    :block-9347 -1654526164,
-   :block-8619 -1331281293,
+   :block-8619 -681849135,
    :block-6 2016000678,
    :block-5806 1116091544,
-   :block-11070 -582306437,
-   :block-4109 1618980510,
+   :block-11070 2062967839,
+   :block-4109 489976692,
    :block-5 1257304849,
    :block-11754 -1455830205,
    :block-8083 1270363815,
    :block-2762 -2050021177,
    :block-9142 -271358562,
    :reco-preview-c-1645295585 -1252144634,
-   :block-10067 -1662876603,
+   :block-10067 -163646933,
    :block-6431 120079542,
-   :block-3 1999892007,
+   :block-3 -1115438357,
    :reco-preview-c--490369712 -1586339425,
    :block-8394 1949651721,
    :block-1650 515744023,
    :reco-preview-c--1238819333 635890714,
    :block-2 -1362189571,
    :block-7837 -65943252,
-   :block-4603 -950738138,
+   :block-4603 960579817,
    :reco-preview-c--273244492 -1801714125},
   :tables-sys
   {:db_schema "none",
@@ -2283,39 +2236,39 @@
    :table_name "flow_history",
    :fields 15},
   :data-hash
-  {nil -657937605,
-   :new-clojure-1 -931225407,
+  {nil 1545609331,
+   :new-clojure-1 890439724,
    :fields-sys -2017569654,
-   :gen-viz-553 1205319217,
+   :gen-viz-553 1092788172,
    :status-drag-0 -305466848,
    :tables-sys -2017569654,
    :rabbit-search-like 27670227,
-   :new-query 1274041333,
-   :cpu-query1 2044014762,
-   :new-query-1 1371503507,
+   :new-query -320381029,
+   :cpu-query1 687612199,
+   :new-query-1 -2123998899,
    :tests 1808645554,
-   :client-stats-drag-33 1547877134,
+   :client-stats-drag-33 1770749940,
    :jvm-stats-drag-39 -305466848,
    :flow-history-drag-38 1414818590,
-   :cnt-33 167198420,
+   :cnt-33 -1555332973,
    :cnt-client-stats-drag-33 -637515650,
    :query-4704 528330850,
-   :jvm-stats-drag-40 -1439924719,
-   :gen-viz-1002 -174850849,
+   :jvm-stats-drag-40 -607018255,
+   :gen-viz-1002 143204095,
    :cnt-client-stats-drag-33-c-1645295585 -637515650,
    :jvm_stats 1292888335,
    :new-clojure-2 1983036560,
    :status-drag-28 1751517515,
    :tests-drag-12 512081645,
-   :client_stats -1557230787,
-   :rabbit-search-like-themes -1589909448,
+   :client_stats -355440954,
+   :rabbit-search-like-themes 695561935,
    :flow_history 1414818590,
    :query-11325 -17758563,
    :query-291 -2073750396,
    :connections-sys 1559621138,
    :query-6018 806287814,
-   :gen-viz-1002-clone-38 1004473701,
-   :rabbit-search-like-screens 1644025067},
+   :gen-viz-1002-clone-38 -1593319011,
+   :rabbit-search-like-screens -337205846},
   :error-str-drag-13.* {},
   :cnt-client-stats-drag-33 {:rowcnt 1},
   :query-4704 {:test_name "total_rows", :rowcnt 77},
@@ -2362,8 +2315,10 @@
     :style-rules
     {[:* :highlight-8717]
      {:logic [:= :client_name :*client-name-str],
-      :style {:border "1px solid #cac18255"}}},
-    :_last-run "07:59:23",
+      :style
+      {:background-color [:str :param/theme-color1 "19"],
+       :border [:str "2px solid " :param/theme-color1 "77"]}}},
+    :_last-run "10:23:26",
     :refresh-every 20,
     :col-widths
     {:server_subs 111,
@@ -2515,5 +2470,4 @@
    :styler_highlight_8717ssa 0},
   :query-6018 {:attribute_name "is_sqlite?", :rowcnt 1618},
   :sys {:selected-tab "welcome to the party pal", :selected-tab-idx 0}},
- :selected-flow "my-new-flow1964",
- :current-url "#/server-stats"}
+ :selected-flow "my-new-flow2358"}

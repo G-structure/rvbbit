@@ -20,7 +20,7 @@
  ;; They will be AVERAGE by default, but can be SUM if you add a + on to the keyword. i.e. :subs+
  :log-atom-sizes? false ;; expensive, only for debugging - if enabled, see server-stats2 screen, it has it's own tab (localhost:8888/#/server-stats2)
  :ui-debug? false ;; adds some extra counters, elements and reactions
- :render-pop? true ;; semi-expensive but enjoyable (the 'tilt shift' upon re-rendering)
+ :render-pop? false ;; semi-expensive but enjoyable (the 'tilt shift' upon re-rendering)
  :default "screens/late-december.edn"
    ;; ^^ if no screen given in URL, load this one. the "start page" essentially.
    ;;    if this screen can't be read or is nil, you will get a basic blank screen with a base theme

@@ -2115,6 +2115,7 @@
 (re-frame/reg-event-db
  ::refresh-all
  (fn [db _]
+   (reset! db/running-queries #{})
    (-> db
        (dissoc :query-history)
        (dissoc :query-history-meta))))
@@ -2527,16 +2528,43 @@
  (fn [db] (get db :drop-type)))
 
 
+;; (re-frame/reg-event-db
+;;  ::get-memory-usage
+;;  (fn [db]
+;;    (let [_ (when (> (count (keys @db/clover-cache-atom)) 500)
+;;              (ut/pp [:clover-cache-atom-reached 500 :keys :clearing])
+;;              (reset! db/clover-cache-atom {}))
+;;          mem (when (exists? js/window.performance.memory)
+;;                [(.-totalJSHeapSize js/window.performance.memory)
+;;                 (.-usedJSHeapSize js/window.performance.memory)
+;;                 (.-jsHeapSizeLimit js/window.performance.memory)])]
+;;      (assoc db :memory mem))))
+
 (re-frame/reg-event-db
  ::get-memory-usage
  (fn [db]
    (let [_ (when (> (count (keys @db/clover-cache-atom)) 500)
              (ut/pp [:clover-cache-atom-reached 500 :keys :clearing])
              (reset! db/clover-cache-atom {}))
-         mem (when (exists? js/window.performance.memory)
-               [(.-totalJSHeapSize js/window.performance.memory)
-                (.-usedJSHeapSize js/window.performance.memory)
-                (.-jsHeapSizeLimit js/window.performance.memory)])]
+         mem (if (exists? js/window.playwright)
+               ;; Try CDP for Playwright first
+               (-> (js/window.playwright._client.send "Performance.getMetrics")
+                   (.then (fn [metrics]
+                            (let [heap-metrics (js->clj metrics)]
+                              [(get heap-metrics "totalJSHeapSize")
+                               (get heap-metrics "usedJSHeapSize")
+                               (get heap-metrics "jsHeapSizeLimit")])))
+                   (.catch (fn [_]
+                           ;; Fallback to regular Chrome memory API
+                             (when (exists? js/window.performance.memory)
+                               [(.-totalJSHeapSize js/window.performance.memory)
+                                (.-usedJSHeapSize js/window.performance.memory)
+                                (.-jsHeapSizeLimit js/window.performance.memory)]))))
+               ;; Regular Chrome browser if no Playwright
+               (when (exists? js/window.performance.memory)
+                 [(.-totalJSHeapSize js/window.performance.memory)
+                  (.-usedJSHeapSize js/window.performance.memory)
+                  (.-jsHeapSizeLimit js/window.performance.memory)]))]
      (assoc db :memory mem))))
 
 (re-frame/reg-sub
@@ -10507,7 +10535,7 @@
 
 
 (defn rabbit-script-box
-  [panel-key query-key selected-field fformula ffield width-int height-int]
+  [panel-key query-key selected-field fformula ffield width-int height-int] ;;
   (let [;sql-hint? (cstr/includes? (str value) ":::sql-string")
         honey-sql  @(ut/tracked-subscribe [::query panel-key query-key])
 
@@ -10518,7 +10546,8 @@
         dyn-font-size (-> (/ (- width-int (- 228 name-mod)) 23)
                           Math/floor
                           (max 11)
-                          (min 21))
+                          (min 17))
+        ;;dyn-font-size 15
         ;; _ (ut/pp [:dyn-font-size dyn-font-size ])
         ;sql-string (materialize-one-sql panel-key key)
         ;; ffield (str (or selected-field :new_field))
@@ -10527,6 +10556,7 @@
         ;;            "=(4 + 5)")
         ;; fformula (get-in @rabbit-script-atom [panel-key query-key :formula] "=(4 + 5)")
         ;; ffield (get-in @rabbit-script-atom [panel-key query-key :name] :new_field)
+        ;;_ (ut/pp  [:fformula fformula])
         ]
 
     ;; (when (nil? (get-in @rabbit-script-atom [panel-key query-key :formula]))
@@ -10538,7 +10568,7 @@
     [re-com/h-box
      :size "none"
      :width (px width-int)
-     :height "48px"
+     ;:height "48px"
      :children
      [[re-com/h-box
        :align :center :justify :center
@@ -10593,24 +10623,34 @@
         :padding-left  "10px"
         :overflow    "auto"
         :font-weight 700} :child
+
        [(reagent/adapt-react-class cm/UnControlled)
-        {:value    fformula
+        {
+         :value    (if (not= (get-in @rabbit-script-atom [panel-key query-key :stack-type]) "clojure")
+                     fformula
+                    ;; fformula
+                     (try
+                       (ut/format-edn width-int fformula)
+                       (catch :default _ (str fformula))))
          :onBlur #(swap! rabbit-script-atom assoc-in [panel-key query-key :formula]
                            ;(cstr/replace (cstr/join " " (ut/cm-deep-values %)) "\"" "'")
-                         (cstr/join " " (ut/cm-deep-values %))
-                         )
+                         (cstr/join "\n" (ut/cm-deep-values %)))
          :options {:mode              (if (not= (get-in @rabbit-script-atom [panel-key query-key :stack-type]) "clojure")
                                         "spreadsheet"
                                         "clojure")
-                   :lineWrapping      true
+                   :lineWrapping      false ;true
                    :lineNumbers       false
                    :matchBrackets     true
                    :autoCloseBrackets true
+                   :preserveCursor    true
                    :autofocus         false
                    :autoScroll        false
                    :detach            true
                    :readOnly          false ;true
-                   :theme             (theme-pull :theme/codemirror-theme nil)}}]]
+                   :theme             (theme-pull :theme/codemirror-theme nil)}}]
+
+
+                       ]
 
       [re-com/h-box
        :size "none"
@@ -11785,10 +11825,17 @@
                               (and (not layers-open-toggle?) layers-open?) (- width-int 15)
                               layers-open? (- width-int 200)
                               :else width-int)
-                  height-int (cond
-                               (and formula-open? layers-open? stack-map-error) (- height-int 84)
-                               (and formula-open? layers-open?) (- height-int 50)
-                               :else height-int)
+                  formula-lines (let [formula (str (get-in @rabbit-script-atom [panel-key query-key :formula]))]
+                                  (if formula
+                                    (count (.split formula "\n"))
+                                    0))
+                  ;;_ (ut/pp [:formula-lines formula-lines])
+                  formula-height (cond
+                                   (and formula-open? (not stack-map-error)) (* 33 formula-lines)
+                                   (and formula-open? layers-open? stack-map-error) 84
+                                   (and formula-open? layers-open?) 50
+                                   :else 0)
+                  height-int (- height-int formula-height)
 
                   modded-width (- width-int 8)
 
@@ -12015,7 +12062,7 @@
                         :border-radius "8px"
                         :margin-left "3px"}
                        (when stack-map-error {:margin-top "-2.5px"}))
-               :height (if stack-map-error "82.5px" "46px")
+               :height (px formula-height) ;;(if stack-map-error "82.5px" "46px")
                :width (px (+ width-int 30))
                :size "none" :justify :center
                :children

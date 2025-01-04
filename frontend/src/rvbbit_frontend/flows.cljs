@@ -4992,7 +4992,7 @@
          [;[:img {:src "images/test-kick-icon.png" :width 30 :height 30}]
           [re-com/md-icon-button :src (at) :md-icon-name (if @db/kick-alert "zmdi-star" "zmdi-star-outline") :style
            {;:color "red"
-            :transition   "all 0.4s ease-in-out"
+            ;:transition   "all 0.4s ease-in-out"
             :color        (if @db/pause-alerts (theme-pull :theme/editor-outer-rim-color nil) "inherit")
             :position     "fixed"
             :bottom        17
@@ -5040,7 +5040,7 @@
                 :border-radius    "19px 0px 0px 19px"
                 :bottom           (if in-panel? 46 25)
                 :z-index          9999
-                :transition       "all 0.9s ease-in-out"
+                ;:transition       "all 0.9s ease-in-out"
                 :right            (if @db/kick-alert 0 edge-hide)
                 :backdrop-filter  "blur(4px)"
                 :min-height       "60px"
