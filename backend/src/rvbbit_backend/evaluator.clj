@@ -34,7 +34,10 @@
 (def repl-server (atom nil))
 (def ext-repl-port (get-in rabbit-config [:ext-nrepl :port] 32999))
 (def ext-repl-host (get-in rabbit-config [:ext-nrepl :host] "127.0.0.1"))
-(def repl-port (get rabbit-config :nrepl-port 8181))
+(def repl-port (or (config/env-int "RVBBIT_NREPL_PORT")
+                   (get rabbit-config :nrepl-port 8181)))
+(def repl-bind (or (config/env "RVBBIT_NREPL_BIND")
+                   (get rabbit-config :nrepl-bind "127.0.0.1")))
 
 (def nrepls-run (atom 0))
 (def nrepls-intros-run (atom 0))
@@ -501,11 +504,11 @@
                    :handles {}})
 
 (defn create-nrepl-server! []
-  (ut/pp [:starting-local-nrepl :port repl-port])
+  (ut/pp [:starting-nrepl :port repl-port :bind repl-bind])
   (reset! repl-server (nrepl-server/start-server
                        :port repl-port
                        ;:handler (nrepl.server/default-handler #'wrap-flexible-safety)
-                       :bind "127.0.0.1")))
+                       :bind repl-bind)))
 
 (defn stop-nrepl-server! [timeout-ms]
   (when @repl-server

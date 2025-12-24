@@ -8,6 +8,17 @@
    ;;[rvbbit-backend.util :as ut]
    [clojure.string  :as cstr]))
 
+;; Environment variable helpers
+(defn env
+  "Get environment variable, with optional default value."
+  ([name] (System/getenv name))
+  ([name default] (or (System/getenv name) default)))
+
+(defn env-int
+  "Get environment variable as integer, with optional default."
+  ([name] (when-let [v (env name)] (Integer/parseInt v)))
+  ([name default] (if-let [v (env name)] (Integer/parseInt v) default)))
+
 (defonce settings-atom (atom {}))
 
 (defn slurp-edn-files
